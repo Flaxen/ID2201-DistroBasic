@@ -15,8 +15,8 @@ init(Port) ->
       % ..
       handler(Listen),
       % ..
-      gen_tcp:close(Listen),
-      ok;
+      gen_tcp:close(Listen);
+      % ok;
     {error, Error} ->
       Error
   end.
