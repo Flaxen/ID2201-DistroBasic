@@ -8,8 +8,6 @@ start(Port) ->
 stop() ->
   exit(whereis(rudy), "time to die").
 
-
-
 init(Port) ->
   Opt = [list, {active, false}, {reuseaddr, true}],
   case gen_tcp:listen(Port, Opt) of
