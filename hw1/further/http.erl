@@ -48,43 +48,39 @@ get(URI) ->
 
 
 get_type(URI) ->
-  {ok, Type, Rest} = parse_type(URI),
+  {ok, Type} = parse_type(URI),
   case Type of
-    "gif" -> {ok, "image/gif", Rest};
-    "png" -> {ok, "image/png", Rest};
-    "jpg" -> {ok, "image/jpg", Rest};
-    "html" -> {ok, "text/html", Rest};
-    "php" -> {ok, "text/html", Rest}
+    "gif" -> {ok, "image/gif"};
+    "png" -> {ok, "image/png"};
+    "jpg" -> {ok, "image/jpg"};
+    "html" -> {ok, "text/html"};
+    "php" -> {ok, "text/html"}
   end.
 
-parse_type([H|T]) ->
-  parse_type([H], T).
-
-parse_type(Rest, [$.|Type]) ->
-  {ok, Type, Rest};
-parse_type(Rest, [C|T]) ->
-  parse_type(Rest ++ [C], T).
+parse_type([$.|Type]) ->
+  {ok, Type};
+parse_type([_|T]) ->
+  parse_type(T).
 
 file_size(Filename) ->
   {ok, {_, Size, _,_,_,_,_,_,_,_,_,_,_,_}} = file:read_file_info(Filename),
   {ok, Size}.
 
 
-
-
-
-
 ok2(Body, Size, Type) ->
-  "HTTP/1.1 200 OK\r\n" ++ "Content-Length : " ++ [Size] ++"\r\nContent-Type : " ++ Type ++ "\r\n" ++ "\r\n" ++ Body.
+  "HTTP/1.1 200 OK\r\n" ++ "Content-Length : " ++ integer_to_list(Size) ++"\r\nContent-Type : " ++ Type ++ "\r\n" ++ "\r\n" ++ Body.
+
 %
 % ok2(Body) ->
-%   "HTTP/1.1 200 OK\r\n" ++ "Content-Length : 2225937\r\nContent-Type : text/gif\r\n" ++ "\r\n" ++ Body.
 
 
 
+% Filename: [72,84,84,80,47,49,46,49,32,50,48,48,32,79,75,13,10,67,111,110,116,101,110,116,45,76,101,110,103,116,104,32,58,32,2225937,13,10,67,111,110,116,101,110,116,45,84,121,112,101,32,58,32,105,109,97,103,101,47,103,105,102,13,10,13,10]
+% Filename: [72,84,84,80,47,49,46,49,32,50,48,48,32,79,75,13,10,67,111,110,116,101,110,116,45,76,101,110,103,116,104,32,58,32,50,50,50,53,57,51,55,13,10,67,111,110,116,101,110,116,45,84,121,112,101,32,58,32,105,109,97,103,101,47,103,105,102,13,10,13,10]
 
-
-
+% Extract of prints showing broken version(above) and working version(below)
+% ... 116,104,32,58,32,2225937,13,10,67,111,110,116,101,110 ...
+% ... 116,104,32,58,32,50,50,50,53,57,51,55,13,10,67,111,110 ...
 
 
 

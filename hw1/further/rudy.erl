@@ -42,7 +42,11 @@ request(Client) ->
       Request = http:parse_request(Str),
       % ..
       Response = reply(Request),
-      gen_tcp:send(Client, Response);
+
+      io:format("rudy:: ~w~n", ["before"]),
+      gen_tcp:send(Client, Response),
+      io:format("rudy:: ~w~n", ["after"]);
+
     {error, Error} ->
       io:format("rudy: error3: ~w~n", [Error])
   end,
@@ -52,12 +56,13 @@ request(Client) ->
 reply({{get, [$/|URI], _}, _, _}) ->
   timer:sleep(40),
   io:format("Filename: ~s~n", [URI]),
+
   {ok, Size} = http:file_size(URI),
-  {ok, Type, _} = http:get_type(URI),
-  {ok, Binary} = file:read_file(URI),
+  {ok, Type} = http:get_type(URI),
   {ok, Binary} = file:read_file(URI),
 
   http:ok2(Binary, Size, Type).
+  % http:ok2(file:read_file(""), Size, Type).
 
 
 
