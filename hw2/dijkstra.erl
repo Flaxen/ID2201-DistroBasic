@@ -22,29 +22,32 @@ update(Node, N, Gateway, Sorted) ->
     true -> error
   end.
 
-updateAll(_, _, [], _, Sorted) ->
+updateAll(_, _, [], _, Sorted, _) ->
   Sorted;
-updateAll(Node, N, [H|T], Map, Sorted) ->
-  Sorted2 = update(H, N, Node, Sorted),
-  {_, Links} = lists:keyfind(H, 1, Map),
-  Sorted3 = updateAll(H, N+1, Links, Map, Sorted2),
-  updateAll(Node, N, T, Map, Sorted3).
+updateAll(Node, N, [H|T], Map, Sorted, Gateway) ->
+  Sorted2 = update(H, N, Gateway, Sorted), % update(H, N, Node, Sorted) ??? senaste eller från början, från början bara paris
+  Found = lists:keyfind(H, 1, Map),
+  if Found == false ->
+    updateAll(Node, N, T, Map, Sorted2, Gateway);
+    true ->
+      {_, Links} = Found,
+      updateAll(H, N+1, Links, Map, Sorted2, Gateway)
+  end.
 
 iterate([], _, Table) ->
   Table;
 iterate([{_, inf, _}|_], _, Table) ->
   Table;
-iterate(Sorted, Map, Table) -> % sorted, map, table
+iterate(Sorted, Map, Table) ->
   [{Node, N, Gateway}|SortedT] = Sorted,
-  {_, Links} = lists:keyfind(Node, 1, Map),
-
-  [H|T] = updateAll(Node, N+1, Links, Map, Sorted),
-  iterate(T, Map, [{Node, Gateway}|Table]).
-
-
-
-  % lägg till alla för nodens barn
-  % lägg till nod
+  Found = lists:keyfind(Node, 1, Map),
+  if Found == false ->
+    iterate(SortedT, Map, [{Node, Gateway}|Table]);
+    true ->
+      {_, Links} = Found,
+      [_|T] = updateAll(Node, N+1, Links, Map, Sorted, Gateway),
+      iterate(T, Map, [{Node, Gateway}|Table])
+  end.
 
 
 
