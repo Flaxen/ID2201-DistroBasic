@@ -1,5 +1,5 @@
 -module(dijkstra).
--export([update/4, iterate/3]).
+-export([table/2, route/2]).
 
 entry(Node, Sorted) ->
   Tuple = lists:keyfind(Node, 1, Sorted),
@@ -25,7 +25,7 @@ update(Node, N, Gateway, Sorted) ->
 updateAll(_, _, [], _, Sorted, _) ->
   Sorted;
 updateAll(Node, N, [H|T], Map, Sorted, Gateway) ->
-  Sorted2 = update(H, N, Node, Sorted), % update(H, N, Node/Gateway, Sorted) ??? senaste eller från början, från början bara paris
+  Sorted2 = update(H, N, Gateway, Sorted), % update(H, N, Node/Gateway, Sorted) ??? senaste eller från början, från början bara paris
   if Sorted2 == Sorted ->
     updateAll(Node, N, T, Map, Sorted2, Gateway);
     true ->
@@ -53,10 +53,26 @@ iterate(Sorted, Map, Table) ->
       iterate(T, Map, [{Node, Gateway}|Table])
   end.
 
+table(Gateways, Map) ->
+  Nodes = lists:map(fun format_node/1, map:all_nodes(Map)),
+  Gates = lists:map(fun format_gateway/1, Gateways),
+  Sorted = Gates ++ Nodes,
+  iterate(Sorted, Map, []).
 
+format_node(Node) ->
+  {Node, inf, unknown}.
 
+format_gateway(Gateway) ->
+  {Gateway, 0, Gateway}.
 
-
+route(Node, Table) ->
+  Tuple = lists:keyfind(Node, 1, Table),
+  case Tuple of
+    false -> notfound;
+    Tuple ->
+      {Node, Gateway} = Tuple,
+      {ok, Gateway}
+  end.
 
 
 
