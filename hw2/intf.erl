@@ -1,4 +1,4 @@
--module(interface).
+-module(intf).
 -export([new/0, remove/2, add/4, lookup/2, ref/2, name/2, list/1, broadcast/2]).
 
 new() ->
@@ -45,7 +45,8 @@ broadcast(Message, Intf) ->
 broadcastList(_, [], _) ->
   ok;
 broadcastList(Message, [H|T], Intf) ->
-  ref(H, Intf) ! Message,
+  {ok, Pid} = lookup(H, Intf),
+  Pid ! Message,
   broadcastList(Message, T, Intf).
 
 
