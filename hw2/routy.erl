@@ -78,6 +78,10 @@ router(Name, N, Hist, Intf, Table, Map) ->
       Intf1 = intf:remove(Down, Intf),
       router(Name, N, Hist, Intf1, Table, Map);
 
+    {status, {Name, N, Hist, Intf, Table, Map}} ->
+      io:format("~w: Name: ~w\n, N: ~w\n, Hist: ~w\n, Intf: ~w\n, Table: ~w\n, Map: ~w\n", [Name, N, Hist, Intf, Table, Map]),
+      router(Name, N, Hist, Intf, Table, Map);
+
     {getstatus, Pid} ->
       Pid ! {status, self()},
       router(Name, N, Hist, Intf, Table, Map);
