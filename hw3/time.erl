@@ -1,10 +1,10 @@
 -module(time).
--export([zero/0, inc/2, merge/2, leq/2]).
+-export([zero/0, inc/2, merge/2, leq/2, clock/1, update/3, safe/2]).
 
 zero() ->
   0.
 
-inc(Name, T) ->
+inc(_, T) ->
   T+1.
 
 merge(Ti, Tj) ->
@@ -21,12 +21,39 @@ leq(Ti, Tj) ->
     false
   end.
 
-% assumption Node is identifier not actual node.
 clock(Nodes) ->
-  Clock = lists:map(fun(X) -> {zero(), X} end, Nodes).
+  lists:map(fun(X) -> {X, zero()} end, Nodes).
 
 update(Node, Time, Clock) ->
-  list:keyreplace(Node, 2, Clock, {Time, Node}).
+  lists:keystore(Node, 1, Clock, {Node, Time}).
 
 safe(Time, Clock) ->
-  
+  L1 = lists:filter(fun({_, N}) -> not leq(Time, N) end, Clock),
+  if
+    L1 == [] ->
+      true;
+    true ->
+      false
+  end.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%
