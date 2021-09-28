@@ -9,17 +9,17 @@ inc(Name, Time) ->
      {Name, N} ->
       lists:keyreplace(Name, 1, Time, {Name, N+1});
     false ->
-      [{Name, 1}|Time] % kanske 0?
+      [{Name, 1}|Time]
   end.
 
 merge([], Time) ->
-  Time; % kanske tom/tomma listan?
+  Time;
 merge([{Name, Ti}|Rest], Time) ->
   case lists:keyfind(Name, 1, Time) of
     {Name, Tj} ->
       [{Name, max(Ti,Tj)}| merge(Rest, lists:keydelete(Name, 1, Time))];
     false ->
-      [{Name, Ti}| merge(Rest, Time)] % också kanske oklart? först tuple. ganska klart Ti
+      [{Name, Ti}| merge(Rest, Time)]
   end.
 
 leq([], _) ->

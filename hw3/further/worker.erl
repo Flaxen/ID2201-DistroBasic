@@ -9,7 +9,7 @@ stop(Worker) ->
 
 init(Name, Log, Seed, Sleep, Jitter) ->
   rand:uniform(Seed), %diff
-  MyTime = time:zero(),  % change  here to revert vect
+  MyTime = vect:zero(),  % change  here to revert vect
   receive
     {peers, Peers} ->
       loop(Name, Log, Peers, Sleep, Jitter, MyTime);
@@ -26,8 +26,8 @@ loop(Name, Log, Peers, Sleep, Jitter, MyTime) ->
   receive
     {msg, Time, Msg} ->
 
-      MyTime1 = time:merge(MyTime, Time),  % change here for revert vect
-      MyTime2 = time:inc(Name, MyTime1),   % change here for revert vect
+      MyTime1 = vect:merge(MyTime, Time),  % change here for revert vect
+      MyTime2 = vect:inc(Name, MyTime1),   % change here for revert vect
 
       Log ! {log, Name, MyTime2, {received, Msg}},
       loop(Name, Log, Peers, Sleep, Jitter, MyTime2);
@@ -40,7 +40,7 @@ loop(Name, Log, Peers, Sleep, Jitter, MyTime) ->
 
   after Wait ->
     Selected = select(Peers),
-    Time = time:inc(Name, MyTime),  % change here for revert vect
+    Time = vect:inc(Name, MyTime),  % change here for revert vect
     Message = {hello, rand:uniform(100)},
     Selected ! {msg, Time, Message},
     jitter(Jitter),
