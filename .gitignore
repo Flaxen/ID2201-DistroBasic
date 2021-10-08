@@ -6,6 +6,7 @@ erl_crash.dump
 .concrete/DEV_MODE
 *.pdf
 *.zip
+*.png
 
 # rebar 2.x
 .rebar

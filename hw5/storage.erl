@@ -11,9 +11,10 @@ lookup(Key, Store) ->
   lists:keyfind(Key, 1, Store).
 
 split(From, To, Store) ->
-  Out = lists:partition(fun({Key, _}) -> (Key > From) and (Key =< To) end, Store),
+  Out = lists:partition(fun({Key, _}) -> key:between(Key, From, To) end, Store),
   % io:format("Out split: ~w~n", [Out]),
   Out.
 
 merge(Entries, Store) ->
-  lists:append(Entries, Store).
+  % lists:append(Entries, Store).
+  Store ++ Entries.

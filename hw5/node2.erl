@@ -177,7 +177,7 @@ lookup(Key, Qref, Client, Id, {Pkey, _}, Successor, Store) ->
   end.
 
 handover(Id, Store, Nkey, Npid) ->
-  {Keep, Rest} = storage:split(Id, Nkey, Store),
+  {Rest, Keep} = storage:split(Id, Nkey, Store),
   Npid ! {handover, Rest},
   Keep.
 
